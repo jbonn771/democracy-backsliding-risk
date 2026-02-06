@@ -1,0 +1,18 @@
+# Data
+/data/*.csv
+/data/*.tsv
+/data/*.parquet
+/data/*.feather
+/data/*.xlsx
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS
+.DS_Store
