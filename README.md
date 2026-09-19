@@ -2,7 +2,7 @@
 
 > **Outcome boundary:** this repository estimates a V-Dem Regimes of the World
 > **democratic-to-autocratic category transition**. It does **not** estimate the
-> beginning of democratic erosion or autocratization. A separate model should
+> beginning of democratic erosion or autocratization. A separate model will
 > address erosion onset.
 
 The unit is a country-year forecast origin *t*. Countries with `v2x_regime` 2
