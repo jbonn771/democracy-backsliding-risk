@@ -1,0 +1,168 @@
+event_key,country_id,country_name,forecast_origin_year,event_year,years_until_event,v2x_regime,v2x_polyarchy,v2x_polyarchy_available,years_in_democratic_spell,spell_start_status,label_status,followup_complete,administratively_matured,evaluation_eligible,labels_for_same_event
+BGD-1996,BGD,Bangladesh,1995,1996,1,2.0,0.511,0.511,4,observed,event_observed,True,True,True,1
+NER-1996,NER,Niger,1995,1996,1,2.0,0.541,0.545,3,observed,event_observed,True,True,True,1
+UKR-1998,UKR,Ukraine,1995,1998,3,2.0,0.549,0.549,4,observed,event_observed,True,True,True,3
+UKR-1998,UKR,Ukraine,1996,1998,2,2.0,0.554,0.549,5,observed,event_observed,True,True,True,3
+UKR-1998,UKR,Ukraine,1997,1998,1,2.0,0.53,0.554,6,observed,event_observed,True,True,True,3
+MKD-1999,MKD,North Macedonia,1998,1999,1,2.0,0.507,0.478,1,observed,event_observed,True,True,True,1
+FJI-2000,FJI,Fiji,1997,2000,3,2.0,0.555,0.534,5,observed,event_observed,True,True,True,3
+FJI-2000,FJI,Fiji,1998,2000,2,2.0,0.555,0.555,6,observed,event_observed,True,True,True,3
+FJI-2000,FJI,Fiji,1999,2000,1,2.0,0.551,0.555,7,observed,event_observed,True,True,True,3
+LKA-2000,LKA,Sri Lanka,1997,2000,3,2.0,0.55,0.55,3,observed,event_observed,True,True,True,3
+LKA-2000,LKA,Sri Lanka,1998,2000,2,2.0,0.533,0.55,4,observed,event_observed,True,True,True,3
+LKA-2000,LKA,Sri Lanka,1999,2000,1,2.0,0.532,0.533,5,observed,event_observed,True,True,True,3
+MWI-2000,MWI,Malawi,1997,2000,3,2.0,0.559,0.559,3,observed,event_observed,True,True,True,3
+MWI-2000,MWI,Malawi,1998,2000,2,2.0,0.559,0.559,4,observed,event_observed,True,True,True,3
+MWI-2000,MWI,Malawi,1999,2000,1,2.0,0.507,0.559,5,observed,event_observed,True,True,True,3
+SLB-2000,SLB,Solomon Islands,1997,2000,3,2.0,0.519,0.524,19,observed,event_observed,True,True,True,3
+SLB-2000,SLB,Solomon Islands,1998,2000,2,2.0,0.505,0.519,20,observed,event_observed,True,True,True,3
+SLB-2000,SLB,Solomon Islands,1999,2000,1,2.0,0.503,0.505,21,observed,event_observed,True,True,True,3
+MDG-2001,MDG,Madagascar,1998,2001,3,2.0,0.509,0.508,5,observed,event_observed,True,True,True,3
+MDG-2001,MDG,Madagascar,1999,2001,2,2.0,0.508,0.509,6,observed,event_observed,True,True,True,3
+MDG-2001,MDG,Madagascar,2000,2001,1,2.0,0.503,0.508,7,observed,event_observed,True,True,True,3
+BGD-2002,BGD,Bangladesh,1999,2002,3,2.0,0.511,0.511,3,observed,event_observed,True,True,True,3
+BGD-2002,BGD,Bangladesh,2000,2002,2,2.0,0.511,0.511,4,observed,event_observed,True,True,True,3
+BGD-2002,BGD,Bangladesh,2001,2002,1,2.0,0.504,0.511,5,observed,event_observed,True,True,True,3
+MDA-2002,MDA,Moldova,1999,2002,3,2.0,0.583,0.582,7,observed,event_observed,True,True,True,3
+MDA-2002,MDA,Moldova,2000,2002,2,2.0,0.575,0.583,8,observed,event_observed,True,True,True,3
+MDA-2002,MDA,Moldova,2001,2002,1,2.0,0.505,0.575,9,observed,event_observed,True,True,True,3
+VEN-2002,VEN,Venezuela,1999,2002,3,2.0,0.67,0.733,41,observed,event_observed,True,True,True,3
+VEN-2002,VEN,Venezuela,2000,2002,2,2.0,0.573,0.67,42,observed,event_observed,True,True,True,3
+VEN-2002,VEN,Venezuela,2001,2002,1,2.0,0.532,0.573,43,observed,event_observed,True,True,True,3
+PHL-2004,PHL,Philippines,2001,2004,3,2.0,0.547,0.588,14,observed,event_observed,True,True,True,3
+PHL-2004,PHL,Philippines,2002,2004,2,2.0,0.535,0.547,15,observed,event_observed,True,True,True,3
+PHL-2004,PHL,Philippines,2003,2004,1,2.0,0.534,0.535,16,observed,event_observed,True,True,True,3
+LKA-2005,LKA,Sri Lanka,2002,2005,3,2.0,0.536,0.497,1,observed,event_observed,True,True,True,3
+LKA-2005,LKA,Sri Lanka,2003,2005,2,2.0,0.536,0.536,2,observed,event_observed,True,True,True,3
+LKA-2005,LKA,Sri Lanka,2004,2005,1,2.0,0.517,0.536,3,observed,event_observed,True,True,True,3
+MDA-2005,MDA,Moldova,2004,2005,1,2.0,0.503,0.499,1,observed,event_observed,True,True,True,1
+FJI-2006,FJI,Fiji,2003,2006,3,2.0,0.538,0.319,1,observed,event_observed,True,True,True,3
+FJI-2006,FJI,Fiji,2004,2006,2,2.0,0.538,0.538,2,observed,event_observed,True,True,True,3
+FJI-2006,FJI,Fiji,2005,2006,1,2.0,0.538,0.538,3,observed,event_observed,True,True,True,3
+MNE-2006,MNE,Montenegro,2005,2006,1,2.0,0.5,0.498,1,observed,event_observed,True,True,True,1
+SLB-2006,SLB,Solomon Islands,2003,2006,3,2.0,0.501,0.501,2,observed,event_observed,True,True,True,3
+SLB-2006,SLB,Solomon Islands,2004,2006,2,2.0,0.514,0.501,3,observed,event_observed,True,True,True,3
+SLB-2006,SLB,Solomon Islands,2005,2006,1,2.0,0.508,0.514,4,observed,event_observed,True,True,True,3
+THA-2006,THA,Thailand,2003,2006,3,2.0,0.539,0.544,6,observed,event_observed,True,True,True,3
+THA-2006,THA,Thailand,2004,2006,2,2.0,0.538,0.539,7,observed,event_observed,True,True,True,3
+THA-2006,THA,Thailand,2005,2006,1,2.0,0.514,0.538,8,observed,event_observed,True,True,True,3
+KEN-2007,KEN,Kenya,2004,2007,3,2.0,0.514,0.514,2,observed,event_observed,True,True,True,3
+KEN-2007,KEN,Kenya,2005,2007,2,2.0,0.514,0.514,3,observed,event_observed,True,True,True,3
+KEN-2007,KEN,Kenya,2006,2007,1,2.0,0.514,0.514,4,observed,event_observed,True,True,True,3
+NIC-2007,NIC,Nicaragua,2004,2007,3,2.0,0.608,0.608,15,observed,event_observed,True,True,True,3
+NIC-2007,NIC,Nicaragua,2005,2007,2,2.0,0.608,0.608,16,observed,event_observed,True,True,True,3
+NIC-2007,NIC,Nicaragua,2006,2007,1,2.0,0.56,0.608,17,observed,event_observed,True,True,True,3
+PNG-2007,PNG,Papua New Guinea,2004,2007,3,2.0,0.52,0.521,32,observed,event_observed,True,True,True,3
+PNG-2007,PNG,Papua New Guinea,2005,2007,2,2.0,0.52,0.52,33,observed,event_observed,True,True,True,3
+PNG-2007,PNG,Papua New Guinea,2006,2007,1,2.0,0.526,0.52,34,observed,event_observed,True,True,True,3
+PSE-2007,PSE,Palestine/West Bank,2004,2007,3,2.0,0.513,0.505,2,observed,event_observed,True,True,True,3
+PSE-2007,PSE,Palestine/West Bank,2005,2007,2,2.0,0.536,0.513,3,observed,event_observed,True,True,True,3
+PSE-2007,PSE,Palestine/West Bank,2006,2007,1,2.0,0.506,0.536,4,observed,event_observed,True,True,True,3
+GEO-2008,GEO,Georgia,2005,2008,3,2.0,0.555,0.553,2,observed,event_observed,True,True,True,3
+GEO-2008,GEO,Georgia,2006,2008,2,2.0,0.553,0.555,3,observed,event_observed,True,True,True,3
+GEO-2008,GEO,Georgia,2007,2008,1,2.0,0.542,0.553,4,observed,event_observed,True,True,True,3
+HND-2009,HND,Honduras,2006,2009,3,2.0,0.521,0.562,13,observed,event_observed,True,True,True,3
+HND-2009,HND,Honduras,2007,2009,2,2.0,0.524,0.521,14,observed,event_observed,True,True,True,3
+HND-2009,HND,Honduras,2008,2009,1,2.0,0.52,0.524,15,observed,event_observed,True,True,True,3
+NER-2009,NER,Niger,2006,2009,3,2.0,0.576,0.568,7,observed,event_observed,True,True,True,3
+NER-2009,NER,Niger,2007,2009,2,2.0,0.576,0.576,8,observed,event_observed,True,True,True,3
+NER-2009,NER,Niger,2008,2009,1,2.0,0.569,0.576,9,observed,event_observed,True,True,True,3
+UKR-2010,UKR,Ukraine,2007,2010,3,2.0,0.604,0.58,2,observed,event_observed,True,True,True,3
+UKR-2010,UKR,Ukraine,2008,2010,2,2.0,0.609,0.604,3,observed,event_observed,True,True,True,3
+UKR-2010,UKR,Ukraine,2009,2010,1,2.0,0.613,0.609,4,observed,event_observed,True,True,True,3
+MKD-2011,MKD,North Macedonia,2008,2011,3,2.0,0.552,0.589,7,observed,event_observed,True,True,True,3
+MKD-2011,MKD,North Macedonia,2009,2011,2,2.0,0.532,0.552,8,observed,event_observed,True,True,True,3
+MKD-2011,MKD,North Macedonia,2010,2011,1,2.0,0.528,0.532,9,observed,event_observed,True,True,True,3
+MLI-2012,MLI,Mali,2009,2012,3,2.0,0.603,0.601,17,observed,event_observed,True,True,True,3
+MLI-2012,MLI,Mali,2010,2012,2,2.0,0.602,0.603,18,observed,event_observed,True,True,True,3
+MLI-2012,MLI,Mali,2011,2012,1,2.0,0.604,0.602,19,observed,event_observed,True,True,True,3
+NPL-2012,NPL,Nepal,2009,2012,3,2.0,0.556,0.473,1,observed,event_observed,True,True,True,3
+NPL-2012,NPL,Nepal,2010,2012,2,2.0,0.549,0.556,2,observed,event_observed,True,True,True,3
+NPL-2012,NPL,Nepal,2011,2012,1,2.0,0.557,0.549,3,observed,event_observed,True,True,True,3
+MDV-2013,MDV,Maldives,2010,2013,3,2.0,0.596,0.603,2,observed,event_observed,True,True,True,3
+MDV-2013,MDV,Maldives,2011,2013,2,2.0,0.597,0.596,3,observed,event_observed,True,True,True,3
+MDV-2013,MDV,Maldives,2012,2013,1,2.0,0.537,0.597,4,observed,event_observed,True,True,True,3
+MNE-2013,MNE,Montenegro,2012,2013,1,2.0,0.502,0.498,1,observed,event_observed,True,True,True,1
+TUR-2013,TUR,Türkiye,2010,2013,3,2.0,0.534,0.551,21,observed,event_observed,True,True,True,3
+TUR-2013,TUR,Türkiye,2011,2013,2,2.0,0.52,0.534,22,observed,event_observed,True,True,True,3
+TUR-2013,TUR,Türkiye,2012,2013,1,2.0,0.512,0.52,23,observed,event_observed,True,True,True,3
+ZMB-2013,ZMB,Zambia,2010,2013,3,2.0,0.515,0.519,5,observed,event_observed,True,True,True,3
+ZMB-2013,ZMB,Zambia,2011,2013,2,2.0,0.502,0.515,6,observed,event_observed,True,True,True,3
+ZMB-2013,ZMB,Zambia,2012,2013,1,2.0,0.503,0.502,7,observed,event_observed,True,True,True,3
+LBY-2014,LBY,Libya,2013,2014,1,2.0,0.541,0.33,1,observed,event_observed,True,True,True,1
+SRB-2014,SRB,Serbia,2011,2014,3,3.0,0.613,0.612,11,observed,event_observed,True,True,True,3
+SRB-2014,SRB,Serbia,2012,2014,2,3.0,0.595,0.613,12,observed,event_observed,True,True,True,3
+SRB-2014,SRB,Serbia,2013,2014,1,2.0,0.504,0.595,13,observed,event_observed,True,True,True,3
+BFA-2015,BFA,Burkina Faso,2012,2015,3,2.0,0.569,0.565,13,observed,event_observed,True,True,True,3
+BFA-2015,BFA,Burkina Faso,2013,2015,2,2.0,0.604,0.569,14,observed,event_observed,True,True,True,3
+BFA-2015,BFA,Burkina Faso,2014,2015,1,2.0,0.575,0.604,15,observed,event_observed,True,True,True,3
+IND-2017,IND,India,2014,2017,3,2.0,0.622,0.658,37,observed,event_observed,True,True,True,3
+IND-2017,IND,India,2015,2017,2,2.0,0.546,0.622,38,observed,event_observed,True,True,True,3
+IND-2017,IND,India,2016,2017,1,2.0,0.526,0.546,39,observed,event_observed,True,True,True,3
+KEN-2017,KEN,Kenya,2014,2017,3,2.0,0.535,0.519,2,observed,event_observed,True,True,True,3
+KEN-2017,KEN,Kenya,2015,2017,2,2.0,0.535,0.535,3,observed,event_observed,True,True,True,3
+KEN-2017,KEN,Kenya,2016,2017,1,2.0,0.533,0.535,4,observed,event_observed,True,True,True,3
+HUN-2018,HUN,Hungary,2015,2018,3,2.0,0.616,0.667,26,observed,event_observed,True,True,True,3
+HUN-2018,HUN,Hungary,2016,2018,2,2.0,0.607,0.616,27,observed,event_observed,True,True,True,3
+HUN-2018,HUN,Hungary,2017,2018,1,2.0,0.559,0.607,28,observed,event_observed,True,True,True,3
+MLI-2018,MLI,Mali,2015,2018,3,2.0,0.542,0.539,2,observed,event_observed,True,True,True,3
+MLI-2018,MLI,Mali,2016,2018,2,2.0,0.542,0.542,3,observed,event_observed,True,True,True,3
+MLI-2018,MLI,Mali,2017,2018,1,2.0,0.532,0.542,4,observed,event_observed,True,True,True,3
+PHL-2018,PHL,Philippines,2015,2018,3,2.0,0.549,0.55,6,observed,event_observed,True,True,True,3
+PHL-2018,PHL,Philippines,2016,2018,2,2.0,0.52,0.549,7,observed,event_observed,True,True,True,3
+PHL-2018,PHL,Philippines,2017,2018,1,2.0,0.508,0.52,8,observed,event_observed,True,True,True,3
+BEN-2019,BEN,Benin,2016,2019,3,2.0,0.709,0.656,25,observed,event_observed,True,True,True,3
+BEN-2019,BEN,Benin,2017,2019,2,2.0,0.714,0.709,26,observed,event_observed,True,True,True,3
+BEN-2019,BEN,Benin,2018,2019,1,2.0,0.611,0.714,27,observed,event_observed,True,True,True,3
+BOL-2019,BOL,Bolivia,2016,2019,3,2.0,0.619,0.617,31,observed,event_observed,True,True,True,3
+BOL-2019,BOL,Bolivia,2017,2019,2,2.0,0.615,0.619,32,observed,event_observed,True,True,True,3
+BOL-2019,BOL,Bolivia,2018,2019,1,2.0,0.598,0.615,33,observed,event_observed,True,True,True,3
+MWI-2019,MWI,Malawi,2016,2019,3,2.0,0.536,0.538,7,observed,event_observed,True,True,True,3
+MWI-2019,MWI,Malawi,2017,2019,2,2.0,0.546,0.536,8,observed,event_observed,True,True,True,3
+MWI-2019,MWI,Malawi,2018,2019,1,2.0,0.527,0.546,9,observed,event_observed,True,True,True,3
+CIV-2020,CIV,Ivory Coast,2017,2020,3,2.0,0.54,0.528,2,observed,event_observed,True,True,True,3
+CIV-2020,CIV,Ivory Coast,2018,2020,2,2.0,0.539,0.54,3,observed,event_observed,True,True,True,3
+CIV-2020,CIV,Ivory Coast,2019,2020,1,2.0,0.532,0.539,4,observed,event_observed,True,True,True,3
+GMB-2020,GMB,The Gambia,2017,2020,3,2.0,0.5,0.249,1,observed,event_observed,True,True,True,3
+GMB-2020,GMB,The Gambia,2018,2020,2,2.0,0.533,0.5,2,observed,event_observed,True,True,True,3
+GMB-2020,GMB,The Gambia,2019,2020,1,2.0,0.526,0.533,3,observed,event_observed,True,True,True,3
+GUY-2021,GUY,Guyana,2018,2021,3,2.0,0.665,0.661,21,observed,event_observed,True,True,True,3
+GUY-2021,GUY,Guyana,2019,2021,2,2.0,0.645,0.665,22,observed,event_observed,True,True,True,3
+GUY-2021,GUY,Guyana,2020,2021,1,2.0,0.557,0.645,23,observed,event_observed,True,True,True,3
+MDG-2021,MDG,Madagascar,2020,2021,1,2.0,0.501,0.494,1,observed,event_observed,True,True,True,1
+NGA-2021,NGA,Nigeria,2018,2021,3,2.0,0.556,0.556,7,observed,event_observed,True,True,True,3
+NGA-2021,NGA,Nigeria,2019,2021,2,2.0,0.525,0.556,8,observed,event_observed,True,True,True,3
+NGA-2021,NGA,Nigeria,2020,2021,1,2.0,0.513,0.525,9,observed,event_observed,True,True,True,3
+SLV-2021,SLV,El Salvador,2018,2021,3,2.0,0.635,0.671,20,observed,event_observed,True,True,True,3
+SLV-2021,SLV,El Salvador,2019,2021,2,2.0,0.594,0.635,21,observed,event_observed,True,True,True,3
+SLV-2021,SLV,El Salvador,2020,2021,1,2.0,0.522,0.594,22,observed,event_observed,True,True,True,3
+BFA-2022,BFA,Burkina Faso,2019,2022,3,2.0,0.657,0.672,4,observed,event_observed,True,True,True,3
+BFA-2022,BFA,Burkina Faso,2020,2022,2,2.0,0.663,0.657,5,observed,event_observed,True,True,True,3
+BFA-2022,BFA,Burkina Faso,2021,2022,1,2.0,0.628,0.663,6,observed,event_observed,True,True,True,3
+GNB-2022,GNB,Guinea-Bissau,2019,2022,3,2.0,0.531,0.514,5,observed,event_observed,True,True,True,3
+GNB-2022,GNB,Guinea-Bissau,2020,2022,2,2.0,0.535,0.531,6,observed,event_observed,True,True,True,3
+GNB-2022,GNB,Guinea-Bissau,2021,2022,1,2.0,0.536,0.535,7,observed,event_observed,True,True,True,3
+MUS-2022,MUS,Mauritius,2019,2022,3,2.0,0.697,0.739,52,observed,event_observed,True,True,True,3
+MUS-2022,MUS,Mauritius,2020,2022,2,2.0,0.555,0.697,53,observed,event_observed,True,True,True,3
+MUS-2022,MUS,Mauritius,2021,2022,1,2.0,0.536,0.555,54,observed,event_observed,True,True,True,3
+TUN-2022,TUN,Tunisia,2019,2022,3,2.0,0.721,0.726,8,observed,event_observed,True,True,True,3
+TUN-2022,TUN,Tunisia,2020,2022,2,2.0,0.707,0.721,9,observed,event_observed,True,True,True,3
+TUN-2022,TUN,Tunisia,2021,2022,1,2.0,0.532,0.707,10,observed,event_observed,True,True,True,3
+UKR-2022,UKR,Ukraine,2019,2022,3,2.0,0.525,0.433,1,observed,event_observed,True,True,True,3
+UKR-2022,UKR,Ukraine,2020,2022,2,2.0,0.546,0.525,2,observed,event_observed,True,True,True,3
+UKR-2022,UKR,Ukraine,2021,2022,1,2.0,0.539,0.546,3,observed,event_observed,True,True,True,3
+NER-2023,NER,Niger,2020,2023,3,2.0,0.549,0.528,10,observed,event_observed,True,True,True,3
+NER-2023,NER,Niger,2021,2023,2,2.0,0.518,0.549,11,observed,event_observed,True,True,True,3
+NER-2023,NER,Niger,2022,2023,1,2.0,0.503,0.518,12,observed,event_observed,False,False,False,3
+SLE-2023,SLE,Sierra Leone,2020,2023,3,2.0,0.548,0.544,18,observed,event_observed,True,True,True,3
+SLE-2023,SLE,Sierra Leone,2021,2023,2,2.0,0.551,0.548,19,observed,event_observed,True,True,True,3
+SLE-2023,SLE,Sierra Leone,2022,2023,1,2.0,0.564,0.551,20,observed,event_observed,False,False,False,3
+GEO-2024,GEO,Georgia,2021,2024,3,2.0,0.604,0.618,12,observed,event_observed,True,True,True,3
+GEO-2024,GEO,Georgia,2022,2024,2,2.0,0.606,0.604,13,observed,event_observed,False,False,False,3
+GEO-2024,GEO,Georgia,2023,2024,1,2.0,0.583,0.606,14,observed,event_observed,False,False,False,3
+IDN-2024,IDN,Indonesia,2021,2024,3,2.0,0.551,0.574,23,observed,event_observed,True,True,True,3
+IDN-2024,IDN,Indonesia,2022,2024,2,2.0,0.557,0.551,24,observed,event_observed,False,False,False,3
+IDN-2024,IDN,Indonesia,2023,2024,1,2.0,0.538,0.557,25,observed,event_observed,False,False,False,3
+MNG-2024,MNG,Mongolia,2021,2024,3,2.0,0.613,0.633,31,observed,event_observed,True,True,True,3
+MNG-2024,MNG,Mongolia,2022,2024,2,2.0,0.573,0.613,32,observed,event_observed,False,False,False,3
+MNG-2024,MNG,Mongolia,2023,2024,1,2.0,0.533,0.573,33,observed,event_observed,False,False,False,3

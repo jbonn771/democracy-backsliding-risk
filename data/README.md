@@ -1,61 +1,44 @@
-# Data Sources
+# Input provenance and acquisition policy
 
-## V-Dem Episodes of Regime Transformation (ERT)
-The ERT dataset provides annual regime trajectories and identifies episodes of
-regime transformation (including autocratization and democratization). This
-project uses ERT to define democratic spells and autocratization onsets.
+## Vendored ERT snapshot
 
-Key fields used:
-- `year`
-- `v2x_regime` (regime category)
-- `country_text_id` / ISO3-like country identifiers (standardized to `country_key`)
+`notebooks/data/ert.csv` was already committed in the initial repository. It
+contains 19,678 rows, 42 columns, 183 `country_text_id` values, and years
+1900–2024. Its SHA-256 is
+`39c6ca13363765ec4acf2d4c51052ed531bb49c91937924e0250d5384ad7fa4d`.
+The file has an export index column (`Unnamed: 0`), ERT episode fields, Regimes
+of the World `v2x_regime`, and `v2x_polyarchy` with uncertainty bounds.
 
-The ingestion logic in `src/data.py` standardizes these columns and filters to
-years with reliable WDI coverage.
+The original commit pointed at the moving ERT `master` CSV but did not record a
+release tag, retrieval date, license copy, or checksum. Therefore the frozen
+identifier is `vendored-ert-sha256-39c6ca133637`; claiming a named upstream
+release would be unsupported. The matching conceptual documentation is the
+[V-Dem dataset page](https://v-dem.net/data/the-v-dem-dataset/) and the source
+is the [ERT repository](https://github.com/vdeminstitute/ERT). A replacement
+snapshot must use a versioned URL, record retrieval UTC, preserve upstream
+documentation, and update its manifest and checksum.
 
-## World Bank Indicators (WDI)
-The model uses a compact set of macroeconomic and demographic indicators:
+## WDI
 
-**Core macro**
-- GDP growth (`NY.GDP.MKTP.KD.ZG`)
-- CPI inflation (`FP.CPI.TOTL.ZG`)
-- Unemployment (`SL.UEM.TOTL.ZS`)
-- GDP per capita, current USD (`NY.GDP.PCAP.CD`)
+The initial repository did **not** preserve a WDI snapshot or metadata. The
+reference offline model consequently does not fetch a mutable API during
+training. `src/data.py` retains validated API acquisition helpers for a future
+explicit snapshot. A WDI snapshot manifest must include API URLs, UTC retrieval
+time, response schema, indicator code/name/definition/source-note, checksum,
+and World Bank country metadata. Aggregates (metadata `region.id == "NA"`) must
+be excluded before joining, and unmatched IDs must be emitted as a report.
 
-**Inequality (sparse)**
-- Gini (`SI.POV.GINI`)
+The intended indicators and codes remain in `DEFAULT_WB_INDICATORS`. The API
+documentation is [World Bank Indicators API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation).
 
-**Debt stress**
-- External debt to GNI (`DT.DOD.DECT.GN.ZS`)
-- Debt service to exports (`DT.TDS.DECT.EX.ZS`)
+## Availability and crosswalk rules
 
-**Living standards proxy**
-- Consumption per capita growth (`NE.CON.PRVT.PC.KD.ZG`)
-
-**Structural / sociological proxies**
-- Resource rents (% GDP) (`NY.GDP.TOTL.RT.ZS`)
-- Total population (`SP.POP.TOTL`)
-- Urban population (`SP.URB.TOTL`)
-- Youth population components (`SP.POP.1519.MA`, `SP.POP.1519.FE`, `SP.POP.2024.MA`, `SP.POP.2024.FE`)
-- Youth unemployment (`SL.UEM.1524.ZS`)
-- Net migration (`SM.POP.NETM`)
-
-Derived features computed in `src/data.py`:
-- Youth share (15-24) as percent of total population
-- Urban share as percent of total population
-- Net migration per 1,000 population
-- Inflation surprise (current CPI inflation minus trailing 5-year mean of prior years)
-
-## Why Raw Data Files Aren't Committed
-- **Licensing and attribution**: data usage terms require appropriate citation.
-- **Reproducibility**: datasets can be re-fetched from authoritative sources.
-- **Size and cleanliness**: raw files are large and often revised.
-
-## Citation Guidance
-When using this repository or derived results, cite:
-- **V-Dem Institute** - Episodes of Regime Transformation (ERT). Include the
-  dataset name, year/version, and access date.
-- **World Bank** - World Development Indicators (WDI). Include indicator list
-  and access date.
-
-Use the official citation formats provided by each data source.
+- `country_text_id` is retained as the versioned ERT political identifier
+  (`ert-country-text-id-v1`). It is not asserted to be ISO3 for every historical
+  entity.
+- WDI joins require exact, historically valid crosswalk entries. No name-based
+  or fuzzy mapping is allowed.
+- Observation year, assumed availability lag, value age, missingness, and
+  carry-forward status are distinct. Lagging never proves publication.
+- Raw downloads must use the atomic `.partial` then rename implementation and
+  pass HTTP, nonempty-body, schema, uniqueness, and checksum checks.

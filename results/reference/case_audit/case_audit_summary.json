@@ -1,0 +1,11 @@
+{
+  "positive_origin_labels": 167,
+  "distinct_transition_events": 61,
+  "labels_per_distinct_event": 2.737704918032787,
+  "events_with_three_overlapping_labels": 53,
+  "events_with_left_truncated_positive_windows": 8,
+  "temporary_exits_recovering_within_3y": 16,
+  "events_at_data_boundary": 3,
+  "countries_with_repeated_breakdowns": 16,
+  "note": "Counts describe the frozen classification. They do not validate each case's substantive interpretation."
+}

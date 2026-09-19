@@ -1,5 +1,7 @@
-numpy>=1.23
-pandas>=1.5
-requests>=2.31
-scikit-learn>=1.2
-matplotlib>=3.6
+# Runtime/test lock for Python 3.11-3.13. Keep synchronized with pyproject.toml.
+numpy==2.2.3
+pandas==2.2.3
+requests==2.32.3
+scikit-learn==1.6.1
+matplotlib==3.10.0
+pytest==8.3.5

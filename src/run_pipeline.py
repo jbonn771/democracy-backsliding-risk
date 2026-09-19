@@ -1,194 +1,166 @@
-"""End-to-end pipeline: load data, build features, fit model, and save plots."""
-
+"""Offline-first democratic-breakdown research pipeline."""
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import json
+import os
 from pathlib import Path
+import pickle
+import subprocess
 import sys
+import uuid
 
 import numpy as np
 import pandas as pd
 
-# Ensure repo root is on sys.path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from src.data import ERT_RELEASE, load_ert, sha256_file
+from src.case_audit import write_case_audit
+from src.features import add_calendar_features, add_political_spells, construct_breakdown_outcomes
+from src.model import (FittedRiskModel, PlattCalibrator, _pipeline, calibration_parameters,
+                       country_bootstrap_metrics, metrics, recent_prevalence_predictions,
+                       reliability_table, rolling_predictions, select_regularization)
 
-from src.data import load_ert, load_wb_panel, DEFAULT_WB_INDICATORS
-from src.features import (
-    construct_risk_set,
-    add_lagged_features,
-    add_change_features,
-    add_rolling_features,
-)
-from src.model import add_duration_bins, fit_hazard_model, plot_calibration_reliability
-from src.plots import (
-    compute_km_table,
-    plot_km_curve,
-    plot_baseline_hazard,
-    simulate_hazard_curves,
-    plot_hazard_simulation,
-)
+SCHEMA_VERSION = "1.0.0"
+OUTCOME_ID = "vdem_row_democracy_to_autocracy_within_3y_v1"
+CROSSWALK_VERSION = "ert-country-text-id-v1"
+POLITICAL_FEATURES = ["v2x_polyarchy"]
+MODEL_FEATURES = ["years_in_democratic_spell", "v2x_polyarchy_available",
+                  "v2x_polyarchy_change1", "v2x_polyarchy_mean3",
+                  "v2x_polyarchy_missing", "v2x_polyarchy_carried_forward"]
 
 
-BASE_FEATURES = [
-    "inflation_surprise",
-    "unemployment",
-    "gdp_growth",
-    "consumption_pc_growth",
-    "gini",
-    "debt_service_exports",
-    "ext_debt_gni",
-    "resource_rents_gdp",
-    "urban_share",
-    "youth_share_1524",
-    "youth_unemployment",
-    "net_migration_per_1000",
-]
-
-PRED_COLS = [
-    "inflation_surprise_rollmean5", "inflation_surprise_chg1", "inflation_surprise_rollstd5",
-    "unemployment_rollmean5", "unemployment_chg1",
-    "consumption_pc_growth_rollmean5", "consumption_pc_growth_chg1",
-    "gini_rollmean5",
-    "debt_service_exports_rollmean5", "debt_service_exports_chg1",
-    "ext_debt_gni_rollmean5",
-    "resource_rents_gdp_rollmean5",
-    "urban_share_rollmean5",
-    "youth_share_1524_rollmean5",
-    "youth_unemployment_rollmean5",
-    "net_migration_per_1000_rollmean5",
-]
-
-SPARSE = [
-    "gini_rollmean5",
-    "ext_debt_gni_rollmean5",
-    "debt_service_exports_rollmean5",
-    "resource_rents_gdp_rollmean5",
-    "youth_unemployment_rollmean5",
-    "net_migration_per_1000_rollmean5",
-]
+def _commit() -> str:
+    try: return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    except Exception: return "unknown"
 
 
-def _build_feature_frame(risk: pd.DataFrame) -> pd.DataFrame:
-    df = risk.copy()
-
-    # Ensure base feature columns exist
-    for f in BASE_FEATURES:
-        if f not in df.columns:
-            df[f] = np.nan
-
-    df = add_lagged_features(df, group_col="country_key", time_col="year", cols=BASE_FEATURES, lags=(1, 2))
-    df = add_change_features(df, cols=BASE_FEATURES, lag1=1, lag2=2)
-    df = add_rolling_features(df, group_col="country_key", time_col="year", cols=BASE_FEATURES, window=5, min_periods=3)
-
-    return df
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Run democracy backsliding risk pipeline.")
-    parser.add_argument("--horizon", type=int, default=3, help="Outcome horizon H (default: 3)")
-    parser.add_argument(
-        "--outcome",
-        type=str,
-        default="within_horizon",
-        choices=["within_horizon", "next_year"],
-        help="Outcome definition (default: within_horizon)",
-    )
-    parser.add_argument("--train-end", type=int, default=2010, help="Train/test split year (default: 2010)")
-    parser.add_argument("--include-country", action="store_true", help="Include country fixed effects")
-    parser.add_argument("--results-dir", type=str, default="results", help="Directory for output plots")
-    parser.add_argument("--data-dir", type=str, default="data", help="Directory for cached data")
-
-    args = parser.parse_args()
-
-    data_dir = Path(args.data_dir)
-    data_dir.mkdir(parents=True, exist_ok=True)
-
-    # Load ERT (use local cache if present)
-    ert_path = data_dir / "ert.csv"
-    if ert_path.exists():
-        ert = load_ert(source=str(ert_path))
-    else:
-        ert = load_ert(cache_dir=str(data_dir))
-
-    # Load WB data and derived features
-    wb = load_wb_panel(DEFAULT_WB_INDICATORS)
-    wb = wb.rename(columns={"iso3": "country_key"})
-
-    # Merge ERT + WB
-    merged = ert.merge(wb, on=["country_key", "year"], how="left")
-
-    # Risk set and spells
-    risk, spell_summary = construct_risk_set(
-        merged, horizon=args.horizon, outcome=args.outcome
-    )
-
-    # Feature engineering
-    risk = _build_feature_frame(risk)
-
-    # Duration bins
-    haz = add_duration_bins(risk)
-
-    # Missingness flags for sparse predictors + limited forward fill
-    haz = haz.sort_values(["country_key", "year"]).copy()
-    for col in SPARSE:
-        if col not in haz.columns:
-            haz[col] = np.nan
-        haz[col + "_missing"] = haz[col].isna().astype(int)
-        haz[col] = haz.groupby("country_key")[col].transform(lambda s: s.ffill(limit=5))
-
-    final_pred = PRED_COLS + [c + "_missing" for c in SPARSE]
-
-    # Model frame
-    keep_cols = ["country_key", "year", "event", "t_in_spell", "dur_bin"] + final_pred
-    haz_model = haz[keep_cols].replace([np.inf, -np.inf], np.nan)
-    haz_model = haz_model[haz_model["dur_bin"].notna()].copy()
-
-    # Fit model
-    res = fit_hazard_model(
-        haz_model,
-        feature_cols=final_pred,
-        duration_bin_col="dur_bin",
-        target_col="event",
-        time_col="year",
-        include_country=args.include_country,
-        country_col="country_key",
-        train_end=args.train_end,
-        calibrate=True,
-    )
-
-    # Plots
-    km_table = compute_km_table(spell_summary)
-    plot_km_curve(km_table, results_dir=args.results_dir, filename="km_curves.png")
-    plot_baseline_hazard(km_table, results_dir=args.results_dir, filename="baseline_hazard.png")
-
-    plot_calibration_reliability(
-        res, n_bins=10, results_dir=args.results_dir, filename="reliability_calibration.png"
-    )
-
-    # Hazard simulation (uses calibrated model if available)
-    model_for_sim = res.get("calibrator", res["model"])
-    sim_ref = haz_model[final_pred + ["dur_bin"]].copy()
-    sim = simulate_hazard_curves(
-        model_for_sim,
-        reference_df=sim_ref,
-        var="unemployment_chg1",
-        values=[-2, -1, 0, 1, 2],
-        duration_bins=["0-2", "3-5", "6-10", "11-20", "21-50", "51+"],
-    )
-    plot_hazard_simulation(
-        sim,
-        var="unemployment_chg1",
-        results_dir=args.results_dir,
-        filename="hazard_simulations.png",
-        title="Effect of unemployment change (Delta1) across duration bins",
-    )
-
-    # Print summary metrics
-    print("Uncalibrated metrics:", res["metrics_uncal"])
-    if "metrics_cal" in res:
-        print("Calibrated metrics:", res["metrics_cal"])
+def prepare_frame(path: Path, analysis_start: int = 1995) -> tuple[pd.DataFrame, pd.DataFrame]:
+    ert = load_ert(path, min_year=1900, max_year=2024)
+    # Preserve V-Dem's numeric identifier under an unambiguous name; the stable
+    # text identifier is the modeling/crosswalk key.
+    if "country_id" in ert: ert = ert.rename(columns={"country_id": "vdem_numeric_country_id"})
+    ert = ert.rename(columns={"country_key": "country_id"})
+    ert["iso3"] = ert["country_id"]
+    if "country_name" not in ert: ert["country_name"] = ert.country_id
+    # Spells and features are deliberately constructed before analysis-period selection.
+    panel = add_political_spells(ert)
+    panel = add_calendar_features(panel, POLITICAL_FEATURES, availability_lag_years=1, max_age_years=2)
+    labelled = construct_breakdown_outcomes(panel, horizon=3, data_as_of_year=2024)
+    labelled = labelled[labelled.year.ge(analysis_start)].copy()
+    labelled = labelled.rename(columns={"year": "forecast_origin_year", "breakdown_within_horizon": "outcome"})
+    return panel, labelled
 
 
-if __name__ == "__main__":
-    main()
+def _cohort_summary(frame: pd.DataFrame, pred: pd.DataFrame) -> dict:
+    event_rows = pred.loc[pred.outcome.eq(1)]
+    return {"origin_year_min": int(pred.forecast_origin_year.min()), "origin_year_max": int(pred.forecast_origin_year.max()),
+            "countries": int(pred.country_id.nunique()), "spells": int(pred[["country_id", "democratic_spell_id"]].drop_duplicates().shape[0]),
+            "rows": len(pred), "positive_labels": int(pred.outcome.sum()),
+            "distinct_events": int(event_rows[["country_id", "event_year"]].drop_duplicates().shape[0])}
+
+
+def _score_table(panel: pd.DataFrame, model: FittedRiskModel, issued: str, run_id: str, commit: str, snapshot: str) -> pd.DataFrame:
+    ref_year = int(panel.year.max())
+    roster = panel.sort_values(["country_id", "year"]).groupby("country_id", as_index=False).tail(1)[["country_id", "iso3", "country_name"]]
+    rows = roster.merge(panel.loc[panel.year.eq(ref_year)], on=["country_id", "iso3", "country_name"], how="left", validate="one_to_one")
+    eligible = rows.political_state.eq("democracy")
+    complete = rows[MODEL_FEATURES].notna().mean(axis=1)
+    predictions = np.full(len(rows), np.nan)
+    if eligible.any(): predictions[eligible.to_numpy()] = model.predict(rows.loc[eligible])
+    reason = np.where(eligible, pd.NA, np.where(rows.year.isna(), "country_not_observed_at_reference_year",
+                      np.where(rows.political_state.eq("autocracy"), "not_democratic_at_origin", "unknown_political_state")))
+    result = pd.DataFrame({
+        "schema_version": SCHEMA_VERSION, "model_type": "democratic_breakdown", "outcome_definition_id": OUTCOME_ID,
+        "country_id": rows.country_id, "iso3": rows.iso3, "country_name": rows.country_name,
+        "country_crosswalk_version": CROSSWALK_VERSION, "forecast_origin_year": ref_year,
+        "forecast_issued_at": issued, "political_state_reference_year": ref_year,
+        "forecast_horizon_years": 3, "target_end_year": ref_year + 3, "estimated_risk": predictions,
+        "risk_interval": pd.NA, "eligibility_status": np.where(eligible, "eligible_retrospective", "ineligible"),
+        "score_status": np.where(eligible, "scored_research_only", "unavailable"), "unavailable_reason": reason,
+        "model_version": "breakdown-logit-v1", "run_id": run_id, "code_commit": commit,
+        "data_snapshot_id": snapshot, "data_as_of": "2024-12-31", "feature_data_completeness": complete,
+        "feature_max_age_years": rows[[c for c in rows if c.endswith("_age_years")]].max(axis=1),
+        "staleness_status": np.where(rows.v2x_polyarchy_age_years.le(2), "within_assumption", "stale_or_missing"),
+        "evaluation_cohort_id": "historical-2015-2021", "calibration_version": "platt-temporal-oos-v1",
+    })
+    return result
+
+
+def run(input_path: Path, output_root: Path) -> Path:
+    panel, labelled = prepare_frame(input_path)
+    model_df = labelled.loc[labelled.evaluation_eligible & labelled.outcome.notna()].copy()
+    model_df["outcome"] = model_df.outcome.astype(int)
+    dev_years, cal_years, eval_years = range(2005, 2011), range(2011, 2015), range(2015, 2022)
+    best_c, tuning = select_regularization(model_df, MODEL_FEATURES, dev_years)
+    cal_pred = rolling_predictions(model_df, MODEL_FEATURES, cal_years, best_c)
+    eval_rich = rolling_predictions(model_df, MODEL_FEATURES, eval_years, best_c)
+    duration_pred = rolling_predictions(model_df, ["years_in_democratic_spell"], eval_years, best_c)
+    score_pred = rolling_predictions(model_df, ["years_in_democratic_spell", "v2x_polyarchy_available"], eval_years, best_c)
+    recent_pred = recent_prevalence_predictions(model_df, eval_years)
+    train_prev = recent_pred.copy()
+    historic = model_df[model_df.forecast_origin_year.lt(min(eval_years) - 3)].outcome.mean()
+    train_prev["prediction"] = historic
+    calibrator = None
+    if len(cal_pred) and cal_pred.outcome.nunique() == 2:
+        calibrator = PlattCalibrator().fit(cal_pred.prediction, cal_pred.outcome)
+        eval_rich["prediction"] = calibrator.predict(eval_rich.prediction)
+
+    comparisons, predictions = {}, {}
+    for name, pred in {"regularized_logit": eval_rich, "duration_only": duration_pred,
+                       "duration_plus_score": score_pred, "recent_prevalence": recent_pred,
+                       "training_prevalence": train_prev}.items():
+        m = metrics(pred.outcome, pred.prediction); intercept, slope = calibration_parameters(pred.outcome.to_numpy(), pred.prediction.to_numpy())
+        comparisons[name] = {**m, "calibration_intercept": intercept, "calibration_slope": slope}
+        predictions[name] = pred
+
+    # Promotion rule is specified before comparison in config; enforce it mechanically.
+    leading = min(comparisons, key=lambda x: comparisons[x]["log_loss"])
+    status = "research-only"  # retrospective vintage and limited event support prohibit deployment claim.
+    final_train = model_df[model_df.label_available_year.le(2024)]
+    estimator = _pipeline(MODEL_FEATURES, best_c).fit(final_train[MODEL_FEATURES], final_train.outcome)
+    fitted = FittedRiskModel(estimator, calibrator, MODEL_FEATURES)
+    issued = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    run_id = f"run-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:8]}"
+    out = output_root / run_id; out.mkdir(parents=True)
+    commit, snapshot = _commit(), f"{ERT_RELEASE}-{sha256_file(input_path)[:12]}"
+    scores = _score_table(panel, fitted, issued, run_id, commit, snapshot)
+    evaluation = {"research_status": status, "leading_candidate": leading,
+                  "cohort": _cohort_summary(model_df, eval_rich), "models": comparisons,
+                  "fixed_prediction_country_bootstrap_95": country_bootstrap_metrics(eval_rich),
+                  "overlapping_positive_labels": int(eval_rich.outcome.sum()),
+                  "distinct_events": int(eval_rich.loc[eval_rich.outcome.eq(1), ["country_id", "event_year"]].drop_duplicates().shape[0]),
+                  "non_overlapping_origin_sensitivity": metrics(
+                      eval_rich.loc[eval_rich.forecast_origin_year.isin([2015, 2018, 2021]), "outcome"],
+                      eval_rich.loc[eval_rich.forecast_origin_year.isin([2015, 2018, 2021]), "prediction"]),
+                  "alternative_cutoff_sensitivity_2016_2021": metrics(
+                      eval_rich.loc[eval_rich.forecast_origin_year.ge(2016), "outcome"],
+                      eval_rich.loc[eval_rich.forecast_origin_year.ge(2016), "prediction"]),
+                  "by_origin_year": {str(y): metrics(g.outcome, g.prediction) for y, g in eval_rich.groupby("forecast_origin_year")},
+                  "feature_missingness": {f: float(model_df[f].isna().mean()) for f in MODEL_FEATURES},
+                  "note": "Evaluation years were inspected by the original notebook and are not a newly untouched holdout."}
+    (out / "metrics.json").write_text(json.dumps(evaluation, indent=2, allow_nan=True) + "\n")
+    tuning.to_csv(out / "tuning.csv", index=False)
+    eval_rich.to_csv(out / "evaluation_predictions.csv", index=False)
+    reliability_table(eval_rich.outcome, eval_rich.prediction).to_csv(out / "reliability.csv", index=False)
+    scores.to_csv(out / "predictions.csv", index=False)
+    with (out / "model.pkl").open("wb") as handle: pickle.dump(fitted, handle)
+    config = json.loads((ROOT / "config" / "model.json").read_text())
+    (out / "configuration.json").write_text(json.dumps(config, indent=2) + "\n")
+    (out / "feature_definitions.json").write_text(json.dumps({"features": MODEL_FEATURES, "availability": "Political values observed in t-1 are assumed available at t; this is not verified publication timing."}, indent=2) + "\n")
+    (out / "input_manifest.json").write_text(json.dumps({"ert": {"path": str(input_path), "sha256": sha256_file(input_path), "snapshot_id": snapshot}, "code_commit": commit}, indent=2) + "\n")
+    (out / "prediction_schema.json").write_text((ROOT / "schemas" / "predictions.schema.json").read_text())
+    write_case_audit(panel, labelled, out / "case_audit")
+    print(json.dumps({"run_dir": str(out), "status": status, "leading_candidate": leading, "metrics": comparisons}, indent=2))
+    return out
+
+
+def main():
+    p = argparse.ArgumentParser(description="Retrospective three-year democratic-breakdown research pipeline")
+    p.add_argument("--input", type=Path, default=ROOT / "notebooks/data/ert.csv")
+    p.add_argument("--output-dir", type=Path, default=ROOT / "artifacts")
+    args = p.parse_args(); run(args.input, args.output_dir)
+
+if __name__ == "__main__": main()

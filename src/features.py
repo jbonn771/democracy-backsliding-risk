@@ -1,210 +1,177 @@
-"""Feature engineering utilities for the democracy backsliding hazard model."""
+"""Calendar-safe panel, spell, feature, and breakdown outcome construction.
 
+The estimand is a *regime-category transition*, not autocratization/erosion
+onset.  All functions are label-free unless their name explicitly mentions
+outcomes, so the same feature builder can score the latest eligible origin.
+"""
 from __future__ import annotations
 
-from typing import Iterable, List, Tuple, Optional
-import pandas as pd
+from typing import Iterable
 import numpy as np
+import pandas as pd
+
+DEMOCRACY = frozenset({2, 3})
+AUTOCRACY = frozenset({0, 1})
 
 
-def construct_risk_set(
+def validate_panel(df: pd.DataFrame, country_col: str = "country_id", year_col: str = "year") -> None:
+    """Reject missing keys, duplicate country-years, and non-integral years."""
+    missing = [c for c in (country_col, year_col) if c not in df]
+    if missing:
+        raise ValueError(f"panel missing required columns: {missing}")
+    if df[[country_col, year_col]].isna().any().any():
+        raise ValueError("country-year keys may not be missing")
+    years = pd.to_numeric(df[year_col], errors="coerce")
+    if years.isna().any() or not np.equal(years, np.floor(years)).all():
+        raise ValueError("years must be integral")
+    dup = df.duplicated([country_col, year_col], keep=False)
+    if dup.any():
+        keys = df.loc[dup, [country_col, year_col]].head().to_dict("records")
+        raise ValueError(f"duplicate country-years: {keys}")
+
+
+def add_political_spells(
     df: pd.DataFrame,
-    country_col: str = "country_key",
+    country_col: str = "country_id",
     year_col: str = "year",
     regime_col: str = "v2x_regime",
-    democracy_threshold: int = 2,
-    horizon: int = 3,
-    outcome: str = "within_horizon",
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Construct the democratic risk set and spell summary.
+) -> pd.DataFrame:
+    """Identify democratic spells on the complete political panel.
 
-    Risk set definition follows the notebook:
-    - Keep democracy-years with known next-year regime outcomes.
-    - Event = autocratization in the next year (or within horizon if specified).
-    - Spells break on year gaps or immediately after an event.
-
-    Multi-year horizon logic:
-    - y=1 if autocratization occurs in [t+1, t+H] within observed years.
-    - y=0 if full H years are observed with no autocratization.
-    - Row dropped if the panel ends before H and no event occurs (right-censored).
-
-    Returns
-    -------
-    risk : pd.DataFrame
-        Risk set with `event`, `t_in_spell`, and `spell_id` columns.
-    spell_summary : pd.DataFrame
-        One row per democratic spell with duration and event indicator.
+    Unknown states and calendar gaps interrupt spells. A spell that begins at
+    a country's first observed democratic row is marked left-truncated unless
+    an observed non-democratic prior year establishes its start.
     """
-    if outcome not in {"next_year", "within_horizon"}:
-        raise ValueError("outcome must be 'next_year' or 'within_horizon'")
-
+    validate_panel(df, country_col, year_col)
     out = df.sort_values([country_col, year_col]).copy()
-
-    out["is_democracy"] = out[regime_col].ge(democracy_threshold).astype("Int64")
-    out["is_democracy_next_year"] = out.groupby(country_col)["is_democracy"].shift(-1)
-
-    out["event_next_year"] = (
-        (out["is_democracy"] == 1) & (out["is_democracy_next_year"] == 0)
+    valid = out[regime_col].isin(DEMOCRACY | AUTOCRACY)
+    out["political_state"] = np.select(
+        [out[regime_col].isin(DEMOCRACY), out[regime_col].isin(AUTOCRACY)],
+        ["democracy", "autocracy"], default="unknown"
+    )
+    prev_year = out.groupby(country_col)[year_col].shift()
+    prev_state = out.groupby(country_col)["political_state"].shift()
+    contiguous = out[year_col].eq(prev_year + 1)
+    start = out["political_state"].eq("democracy") & (~contiguous | prev_state.ne("democracy"))
+    out["democratic_spell_id"] = start.groupby(out[country_col]).cumsum().where(
+        out["political_state"].eq("democracy")
     ).astype("Int64")
-    # Backwards-compatible alias
-    out["y_autocratization_next_year"] = out["event_next_year"]
-
-    if horizon is None or horizon < 1:
-        raise ValueError("horizon must be >= 1")
-
-    if horizon == 1:
-        out["event_horizon"] = out["event_next_year"]
-    else:
-        out["event_horizon"] = (
-            out.groupby(country_col, group_keys=False)
-            .apply(lambda g: _compute_horizon_event(g, horizon, year_col, "is_democracy"))
-            .astype("Int64")
-        )
-    out[f"y_autocratization_within_{horizon}y"] = out["event_horizon"]
-
-    risk = out[out["is_democracy"] == 1].copy()
-    risk = risk.sort_values([country_col, year_col]).copy()
-
-    # spells: break on year gaps or after an event
-    risk["year_gap"] = risk.groupby(country_col)[year_col].diff().fillna(1)
-    risk["new_spell"] = (risk["year_gap"] != 1).astype(int)
-
-    risk["post_event_break"] = (
-        risk.groupby(country_col)["event_next_year"].shift(1).fillna(0).astype(int)
-    )
-    risk["spell_break"] = ((risk["new_spell"] == 1) | (risk["post_event_break"] == 1)).astype(int)
-
-    risk["spell_id"] = risk.groupby(country_col)["spell_break"].cumsum()
-    risk["t_in_spell"] = risk.groupby([country_col, "spell_id"]).cumcount()
-
-    if outcome == "next_year":
-        risk = risk[risk["is_democracy_next_year"].notna()].copy()
-        risk["event"] = risk["event_next_year"].astype("int64")
-    else:
-        risk = risk[risk["event_horizon"].notna()].copy()
-        risk["event"] = risk["event_horizon"].astype("int64")
-
-    spell_summary = (
-        risk.groupby([country_col, "spell_id"])
-        .agg(
-            start_year=(year_col, "min"),
-            end_year=(year_col, "max"),
-            duration=("t_in_spell", "max"),
-            event=("event", "max"),
-        )
-        .reset_index()
-    )
-    spell_summary["duration_years"] = spell_summary["duration"] + 1
-
-    return risk, spell_summary
+    first = out.groupby(country_col).cumcount().eq(0)
+    unknown_start = start & (first | ~contiguous | prev_state.eq("unknown"))
+    truncated_ids = set(zip(out.loc[unknown_start, country_col], out.loc[unknown_start, "democratic_spell_id"]))
+    out["spell_start_status"] = pd.NA
+    dem = out["political_state"].eq("democracy")
+    out.loc[dem, "spell_start_status"] = [
+        "left_truncated_or_unknown" if (c, s) in truncated_ids else "observed"
+        for c, s in zip(out.loc[dem, country_col], out.loc[dem, "democratic_spell_id"])
+    ]
+    out["years_in_democratic_spell"] = (
+        out.loc[dem].groupby([country_col, "democratic_spell_id"]).cumcount() + 1
+    ).reindex(out.index).astype("Int64")
+    out["regime_valid"] = valid
+    return out
 
 
-def _compute_horizon_event(
-    group: pd.DataFrame,
-    horizon: int,
-    year_col: str,
-    is_dem_col: str,
-) -> pd.Series:
-    """Compute event within horizon for one country group.
+def construct_breakdown_outcomes(
+    panel: pd.DataFrame,
+    horizon: int = 3,
+    data_as_of_year: int | None = None,
+    country_col: str = "country_id",
+    year_col: str = "year",
+    regime_col: str = "v2x_regime",
+) -> pd.DataFrame:
+    """Create explicit H-year first-transition labels for democratic origins.
 
-    Returns Int64 series with values {1, 0, <NA>}.
+    Evaluation eligibility requires an administratively matured origin cohort
+    (`t + H <= data_as_of_year`) even when an event happens early. Unknown or
+    absent required follow-up before the first event is never a negative.
     """
-    years = group[year_col].to_numpy()
-    is_dem = group[is_dem_col].to_numpy()
-    year_to_idx = {int(y): i for i, y in enumerate(years) if pd.notna(y)}
-
-    out = np.full(len(group), pd.NA, dtype="object")
-
-    for i, y in enumerate(years):
-        if pd.isna(is_dem[i]) or is_dem[i] != 1:
-            continue
-
-        future_years = [int(y) + k for k in range(1, horizon + 1)]
-        observed = []
-        event_found = False
-
-        for fy in future_years:
-            idx = year_to_idx.get(fy)
-            if idx is None:
-                continue
-            observed.append(fy)
-            if is_dem[idx] == 0:
-                event_found = True
-                break
-
-        if event_found:
-            out[i] = 1
+    if not isinstance(horizon, int) or isinstance(horizon, bool) or horizon < 1:
+        raise ValueError("horizon must be a positive integer")
+    validate_panel(panel, country_col, year_col)
+    if data_as_of_year is None:
+        data_as_of_year = int(panel[year_col].max())
+    lookup = panel.set_index([country_col, year_col])[regime_col].to_dict()
+    origins = panel.loc[panel[regime_col].isin(DEMOCRACY)].copy()
+    rows = []
+    for idx, row in origins.iterrows():
+        country, year = row[country_col], int(row[year_col])
+        states, event_year = [], None
+        for future_year in range(year + 1, year + horizon + 1):
+            state = lookup.get((country, future_year), np.nan)
+            states.append(state)
+            if event_year is None and state in AUTOCRACY:
+                event_year = future_year
+        pre_event = states if event_year is None else states[: event_year - year]
+        complete_to_event = all(x in (DEMOCRACY | AUTOCRACY) for x in pre_event)
+        full_followup = all(x in (DEMOCRACY | AUTOCRACY) for x in states)
+        matured = year + horizon <= data_as_of_year
+        if event_year is not None and complete_to_event:
+            label, status = 1, "event_observed"
+        elif full_followup:
+            label, status = 0, "complete_non_event"
         else:
-            if len(observed) == horizon:
-                out[i] = 0
-            else:
-                out[i] = pd.NA
+            label, status = pd.NA, "incomplete_followup"
+        rows.append((idx, label, status, event_year, full_followup, matured))
+    meta = pd.DataFrame(rows, columns=["_idx", "breakdown_within_horizon", "label_status", "event_year", "followup_complete", "administratively_matured"]).set_index("_idx")
+    origins = origins.join(meta)
+    origins["breakdown_within_horizon"] = origins["breakdown_within_horizon"].astype("Int64")
+    origins["event_year"] = origins["event_year"].astype("Int64")
+    origins["forecast_horizon_years"] = horizon
+    origins["target_end_year"] = origins[year_col] + horizon
+    origins["label_available_year"] = origins["target_end_year"]
+    origins["evaluation_eligible"] = origins["administratively_matured"] & origins["breakdown_within_horizon"].notna()
+    return origins
 
-    return pd.Series(out, index=group.index, dtype="Int64")
 
-
-def add_lagged_features(
-    df: pd.DataFrame,
-    group_col: str,
-    time_col: str,
-    cols: Iterable[str],
-    lags: Iterable[int] = (1, 2),
+def add_calendar_features(
+    panel: pd.DataFrame,
+    value_cols: Iterable[str],
+    availability_lag_years: int = 1,
+    max_age_years: int = 3,
+    country_col: str = "country_id",
+    year_col: str = "year",
 ) -> pd.DataFrame:
-    """Add lagged features by group, avoiding temporal leakage."""
-    out = df.sort_values([group_col, time_col]).copy()
-    for col in cols:
-        for lag in lags:
-            out[f"{col}_lag{lag}"] = out.groupby(group_col)[col].shift(lag)
-    return out
+    """Build lagged/rolling features before risk-set selection.
 
-
-def add_change_features(
-    df: pd.DataFrame,
-    cols: Iterable[str],
-    lag1: int = 1,
-    lag2: int = 2,
-) -> pd.DataFrame:
-    """Add simple change features based on lagged values (lag1 - lag2)."""
-    out = df.copy()
-    for col in cols:
-        out[f"{col}_chg1"] = out[f"{col}_lag{lag1}"] - out[f"{col}_lag{lag2}"]
-    return out
-
-
-def add_rolling_features(
-    df: pd.DataFrame,
-    group_col: str,
-    time_col: str,
-    cols: Iterable[str],
-    window: int = 5,
-    min_periods: int = 3,
-) -> pd.DataFrame:
-    """Add rolling mean/std and acceleration features, using only past data.
-
-    The rolling window is computed on lagged values to avoid leakage.
+    The lag is an explicit availability *assumption*, not evidence of actual
+    publication timing. Filling is bounded by elapsed calendar time, and every
+    feature carries age, missingness, and imputation flags.
     """
-    out = df.sort_values([group_col, time_col]).copy()
-    for col in cols:
-        lag1 = out.groupby(group_col)[col].shift(1)
-        roll_mean = lag1.groupby(out[group_col]).transform(
-            lambda s: s.rolling(window, min_periods=min_periods).mean()
-        )
-        roll_std = lag1.groupby(out[group_col]).transform(
-            lambda s: s.rolling(window, min_periods=min_periods).std()
-        )
+    validate_panel(panel, country_col, year_col)
+    if availability_lag_years < 0 or max_age_years < 0:
+        raise ValueError("availability lag and max age must be nonnegative")
+    out = panel.sort_values([country_col, year_col]).copy()
+    # Reindex each country to a calendar grid so shift/rolling cannot cross gaps.
+    frames = []
+    for country, group in out.groupby(country_col, sort=False):
+        years = pd.RangeIndex(int(group[year_col].min()), int(group[year_col].max()) + 1)
+        g = group.set_index(year_col).reindex(years)
+        g[country_col] = country
+        g[year_col] = g.index
+        g["_original_row"] = g.index.isin(group[year_col])
+        for col in value_cols:
+            if col not in g:
+                g[col] = np.nan
+            observed_year = pd.Series(np.where(g[col].notna(), g.index, np.nan), index=g.index).ffill()
+            available = g[col].shift(availability_lag_years)
+            available_obs_year = observed_year.shift(availability_lag_years)
+            age = g.index.to_series() - available_obs_year
+            filled = available.ffill().where(age <= max_age_years)
+            g[f"{col}_available"] = filled
+            g[f"{col}_age_years"] = age.where(filled.notna())
+            g[f"{col}_missing"] = filled.isna().astype(int)
+            g[f"{col}_carried_forward"] = (filled.notna() & available.isna()).astype(int)
+            g[f"{col}_change1"] = filled - filled.shift(1)
+            g[f"{col}_mean3"] = filled.shift(1).rolling(3, min_periods=2).mean()
+        frames.append(g.loc[g["_original_row"]].drop(columns="_original_row"))
+    return pd.concat(frames, ignore_index=True).sort_values([country_col, year_col]).reset_index(drop=True)
 
-        out[f"{col}_rollmean{window}"] = roll_mean
-        out[f"{col}_rollstd{window}"] = roll_std
-        out[f"{col}_accel"] = lag1 - roll_mean
-    return out
 
-
-def ensure_no_leakage(df: pd.DataFrame, time_col: str, feature_cols: List[str]) -> None:
-    """Basic guard to ensure feature columns are not forward-looking.
-
-    This is a lightweight check: it raises if any feature column is identical
-    to the target year column (a common leakage error).
-    """
-    for col in feature_cols:
-        if col == time_col:
-            raise ValueError("Feature columns must not include the time index column.")
+# Backward-compatible aliases intentionally fail toward the explicit estimand.
+def construct_risk_set(df: pd.DataFrame, horizon: int = 3, **kwargs):
+    country_col = kwargs.get("country_col", "country_key")
+    out = df.rename(columns={country_col: "country_id"}) if country_col != "country_id" else df
+    spells = add_political_spells(out)
+    risk = construct_breakdown_outcomes(spells, horizon=horizon)
+    return risk, pd.DataFrame()
