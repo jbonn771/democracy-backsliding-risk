@@ -4,6 +4,7 @@
 /data/*.parquet
 /data/*.feather
 /data/*.xlsx
+/artifacts/
 
 # Notebooks
 .ipynb_checkpoints/

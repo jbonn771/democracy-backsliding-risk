@@ -9,12 +9,18 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, Iterable, Optional
+import hashlib
+import json
+import os
 import time
 
 import numpy as np
 import pandas as pd
 import requests
 
+# The vendored file is pinned by checksum because the original commit did not
+# preserve an upstream release tag. New acquisitions must set a versioned URL.
+ERT_RELEASE = "vendored-ert-sha256-39c6ca133637"
 ERT_URL = "https://raw.githubusercontent.com/vdeminstitute/ERT/master/inst/ert.csv"
 
 DEFAULT_WB_INDICATORS: Dict[str, str] = {
@@ -56,18 +62,45 @@ WB_BASE = "https://api.worldbank.org/v2"
 
 
 def download_file(url: str, dest_path: Path | str, overwrite: bool = False, timeout: int = 120) -> Path:
-    """Download a file to dest_path if missing (or overwrite=True)."""
+    """Atomically download a file, rejecting empty/error responses."""
     dest = Path(dest_path)
     if dest.exists() and not overwrite:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
 
-    r = requests.get(url, stream=True, timeout=timeout)
-    r.raise_for_status()
-    with dest.open("wb") as f:
-        for chunk in r.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                f.write(chunk)
+    tmp = dest.with_name(dest.name + ".partial")
+    try:
+        with requests.get(url, stream=True, timeout=timeout) as r:
+            r.raise_for_status()
+            content_type = r.headers.get("content-type", "")
+            if "text/html" in content_type:
+                raise ValueError(f"unexpected HTML response from {url}")
+            with tmp.open("wb") as f:
+                for chunk in r.iter_content(chunk_size=1024 * 1024):
+                    if chunk: f.write(chunk)
+        if not tmp.exists() or tmp.stat().st_size == 0:
+            raise ValueError(f"empty download from {url}")
+        os.replace(tmp, dest)
+    finally:
+        tmp.unlink(missing_ok=True)
+    return dest
+
+
+def sha256_file(path: Path | str) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""): digest.update(block)
+    return digest.hexdigest()
+
+
+def write_input_manifest(files: Iterable[Path | str], destination: Path | str, metadata: dict) -> Path:
+    """Write checksums and provenance alongside immutable input snapshots."""
+    dest = Path(destination); dest.parent.mkdir(parents=True, exist_ok=True)
+    payload = {**metadata, "files": [{"path": str(Path(p)), "bytes": Path(p).stat().st_size,
+                                      "sha256": sha256_file(p)} for p in files]}
+    tmp = dest.with_name(dest.name + ".partial")
+    tmp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    os.replace(tmp, dest)
     return dest
 
 
@@ -93,8 +126,8 @@ def _pick_col(df: pd.DataFrame, candidates: Iterable[str]) -> Optional[str]:
 def load_ert(
     source: Optional[str | Path] = None,
     cache_dir: Optional[str | Path] = None,
-    min_year: int = 1950,
-    max_year: int = 2025,
+    min_year: int = 1900,
+    max_year: int = 2024,
 ) -> pd.DataFrame:
     """Load and standardize the V-Dem ERT dataset.
 
@@ -146,6 +179,11 @@ def load_ert(
 
     out = out[(out["year"] >= min_year) & (out["year"] <= max_year)].copy()
     out = out[out["country_key"].notna() & (out["country_key"] != "")].copy()
+    required = ["country_key", "year", "v2x_regime"]
+    if out.duplicated(["country_key", "year"]).any():
+        raise ValueError("ERT contains duplicate country-year keys")
+    if out.empty or any(c not in out for c in required):
+        raise ValueError("ERT schema validation failed")
     return out
 
 

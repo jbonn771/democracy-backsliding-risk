@@ -1,0 +1,62 @@
+event_key,country_id,country_name,event_year,first_positive_origin,last_positive_origin,overlapping_positive_labels,matured_positive_labels,origin_spell_start_status,positive_window_left_truncated,regime_before,regime_event_year,polyarchy_before,polyarchy_event_year,polyarchy_change_at_event,first_recovery_year,years_to_recovery,temporary_exit_within_3y,event_at_data_boundary,country_has_repeated_breakdowns
+BGD-1996,BGD,Bangladesh,1996,1995,1995,1,1,observed,True,2.0,1.0,0.511,0.5,-0.01100000000000001,1997.0,1.0,True,False,True
+NER-1996,NER,Niger,1996,1995,1995,1,1,observed,True,2.0,1.0,0.541,0.291,-0.25000000000000006,2000.0,4.0,False,False,True
+UKR-1998,UKR,Ukraine,1998,1995,1997,3,3,observed,False,2.0,1.0,0.53,0.45,-0.08000000000000002,2006.0,8.0,False,False,True
+MKD-1999,MKD,North Macedonia,1999,1998,1998,1,1,observed,True,2.0,1.0,0.507,0.566,0.05899999999999994,2002.0,3.0,True,False,True
+FJI-2000,FJI,Fiji,2000,1997,1999,3,3,observed,False,2.0,0.0,0.551,0.346,-0.20500000000000007,2003.0,3.0,True,False,True
+LKA-2000,LKA,Sri Lanka,2000,1997,1999,3,3,observed,False,2.0,1.0,0.532,0.493,-0.039000000000000035,2002.0,2.0,True,False,True
+MWI-2000,MWI,Malawi,2000,1997,1999,3,3,observed,False,2.0,1.0,0.507,0.475,-0.03200000000000003,2010.0,10.0,False,False,True
+SLB-2000,SLB,Solomon Islands,2000,1997,1999,3,3,observed,False,2.0,1.0,0.503,0.353,-0.15000000000000002,2002.0,2.0,True,False,True
+MDG-2001,MDG,Madagascar,2001,1998,2000,3,3,observed,False,2.0,1.0,0.503,0.498,-0.0050000000000000044,2020.0,19.0,False,False,True
+BGD-2002,BGD,Bangladesh,2002,1999,2001,3,3,observed,False,2.0,1.0,0.504,0.463,-0.04099999999999998,,,False,False,True
+MDA-2002,MDA,Moldova,2002,1999,2001,3,3,observed,False,2.0,1.0,0.505,0.499,-0.006000000000000005,2004.0,2.0,True,False,True
+VEN-2002,VEN,Venezuela,2002,1999,2001,3,3,observed,False,2.0,1.0,0.532,0.499,-0.03300000000000003,,,False,False,False
+PHL-2004,PHL,Philippines,2004,2001,2003,3,3,observed,False,2.0,1.0,0.534,0.493,-0.041000000000000036,2010.0,6.0,False,False,True
+LKA-2005,LKA,Sri Lanka,2005,2002,2004,3,3,observed,False,2.0,1.0,0.517,0.432,-0.08500000000000002,2015.0,10.0,False,False,True
+MDA-2005,MDA,Moldova,2005,2004,2004,1,1,observed,True,2.0,1.0,0.503,0.444,-0.059,2010.0,5.0,False,False,True
+FJI-2006,FJI,Fiji,2006,2003,2005,3,3,observed,False,2.0,1.0,0.538,0.397,-0.14100000000000001,2023.0,17.0,False,False,True
+MNE-2006,MNE,Montenegro,2006,2005,2005,1,1,observed,True,2.0,1.0,0.5,0.496,-0.0040000000000000036,2012.0,6.0,False,False,True
+SLB-2006,SLB,Solomon Islands,2006,2003,2005,3,3,observed,False,2.0,1.0,0.508,0.458,-0.04999999999999999,2007.0,1.0,True,False,True
+THA-2006,THA,Thailand,2006,2003,2005,3,3,observed,False,2.0,1.0,0.514,0.236,-0.278,,,False,False,False
+KEN-2007,KEN,Kenya,2007,2004,2006,3,3,observed,False,2.0,1.0,0.514,0.514,0.0,2013.0,6.0,False,False,True
+NIC-2007,NIC,Nicaragua,2007,2004,2006,3,3,observed,False,2.0,1.0,0.56,0.457,-0.10300000000000004,,,False,False,False
+PNG-2007,PNG,Papua New Guinea,2007,2004,2006,3,3,observed,False,2.0,1.0,0.526,0.495,-0.031000000000000028,,,False,False,False
+PSE-2007,PSE,Palestine/West Bank,2007,2004,2006,3,3,observed,False,2.0,1.0,0.506,0.329,-0.177,,,False,False,False
+GEO-2008,GEO,Georgia,2008,2005,2007,3,3,observed,False,2.0,1.0,0.542,0.498,-0.04400000000000004,2010.0,2.0,True,False,True
+HND-2009,HND,Honduras,2009,2006,2008,3,3,observed,False,2.0,1.0,0.52,0.441,-0.07900000000000001,2022.0,13.0,False,False,False
+NER-2009,NER,Niger,2009,2006,2008,3,3,observed,False,2.0,1.0,0.569,0.42,-0.14899999999999997,2011.0,2.0,True,False,True
+UKR-2010,UKR,Ukraine,2010,2007,2009,3,3,observed,False,2.0,1.0,0.613,0.49,-0.123,2019.0,9.0,False,False,True
+MKD-2011,MKD,North Macedonia,2011,2008,2010,3,3,observed,False,2.0,1.0,0.528,0.48,-0.04800000000000004,2017.0,6.0,False,False,True
+MLI-2012,MLI,Mali,2012,2009,2011,3,3,observed,False,2.0,1.0,0.604,0.353,-0.251,2014.0,2.0,True,False,True
+NPL-2012,NPL,Nepal,2012,2009,2011,3,3,observed,False,2.0,1.0,0.557,0.391,-0.16600000000000004,2014.0,2.0,True,False,False
+MDV-2013,MDV,Maldives,2013,2010,2012,3,3,observed,False,2.0,1.0,0.537,0.45,-0.08700000000000002,2019.0,6.0,False,False,False
+MNE-2013,MNE,Montenegro,2013,2012,2012,1,1,observed,True,2.0,1.0,0.502,0.476,-0.026000000000000023,2021.0,8.0,False,False,True
+TUR-2013,TUR,Türkiye,2013,2010,2012,3,3,observed,False,2.0,1.0,0.512,0.47,-0.04200000000000004,,,False,False,False
+ZMB-2013,ZMB,Zambia,2013,2010,2012,3,3,observed,False,2.0,1.0,0.503,0.487,-0.016000000000000014,2022.0,9.0,False,False,False
+LBY-2014,LBY,Libya,2014,2013,2013,1,1,observed,True,2.0,0.0,0.541,0.28,-0.261,,,False,False,False
+SRB-2014,SRB,Serbia,2014,2011,2013,3,3,observed,False,2.0,1.0,0.504,0.446,-0.057999999999999996,,,False,False,False
+BFA-2015,BFA,Burkina Faso,2015,2012,2014,3,3,observed,False,2.0,1.0,0.575,0.376,-0.19899999999999995,2016.0,1.0,True,False,True
+IND-2017,IND,India,2017,2014,2016,3,3,observed,False,2.0,1.0,0.526,0.481,-0.04500000000000004,,,False,False,False
+KEN-2017,KEN,Kenya,2017,2014,2016,3,3,observed,False,2.0,1.0,0.533,0.51,-0.02300000000000002,2022.0,5.0,False,False,True
+HUN-2018,HUN,Hungary,2018,2015,2017,3,3,observed,False,2.0,1.0,0.559,0.483,-0.07600000000000007,,,False,False,False
+MLI-2018,MLI,Mali,2018,2015,2017,3,3,observed,False,2.0,1.0,0.532,0.512,-0.020000000000000018,,,False,False,True
+PHL-2018,PHL,Philippines,2018,2015,2017,3,3,observed,False,2.0,1.0,0.508,0.482,-0.026000000000000023,,,False,False,True
+BEN-2019,BEN,Benin,2019,2016,2018,3,3,observed,False,2.0,1.0,0.611,0.456,-0.15499999999999997,,,False,False,False
+BOL-2019,BOL,Bolivia,2019,2016,2018,3,3,observed,False,2.0,1.0,0.598,0.481,-0.11699999999999999,2021.0,2.0,True,False,False
+MWI-2019,MWI,Malawi,2019,2016,2018,3,3,observed,False,2.0,1.0,0.527,0.476,-0.051000000000000045,2020.0,1.0,True,False,True
+CIV-2020,CIV,Ivory Coast,2020,2017,2019,3,3,observed,False,2.0,1.0,0.532,0.499,-0.03300000000000003,,,False,False,False
+GMB-2020,GMB,The Gambia,2020,2017,2019,3,3,observed,False,2.0,1.0,0.526,0.496,-0.030000000000000027,2021.0,1.0,True,False,False
+GUY-2021,GUY,Guyana,2021,2018,2020,3,3,observed,False,2.0,1.0,0.557,0.495,-0.062000000000000055,,,False,False,False
+MDG-2021,MDG,Madagascar,2021,2020,2020,1,1,observed,True,2.0,1.0,0.501,0.494,-0.007000000000000006,,,False,False,True
+NGA-2021,NGA,Nigeria,2021,2018,2020,3,3,observed,False,2.0,1.0,0.513,0.491,-0.02200000000000002,2024.0,3.0,True,False,False
+SLV-2021,SLV,El Salvador,2021,2018,2020,3,3,observed,False,2.0,1.0,0.522,0.409,-0.11300000000000004,,,False,False,False
+BFA-2022,BFA,Burkina Faso,2022,2019,2021,3,3,observed,False,2.0,1.0,0.628,0.274,-0.354,,,False,False,True
+GNB-2022,GNB,Guinea-Bissau,2022,2019,2021,3,3,observed,False,2.0,1.0,0.536,0.381,-0.15500000000000003,,,False,False,False
+MUS-2022,MUS,Mauritius,2022,2019,2021,3,3,observed,False,2.0,1.0,0.536,0.498,-0.038000000000000034,,,False,False,False
+TUN-2022,TUN,Tunisia,2022,2019,2021,3,3,observed,False,2.0,1.0,0.532,0.283,-0.24900000000000005,,,False,False,False
+UKR-2022,UKR,Ukraine,2022,2019,2021,3,3,observed,False,2.0,1.0,0.539,0.389,-0.15000000000000002,,,False,False,True
+NER-2023,NER,Niger,2023,2020,2022,3,2,observed,False,2.0,1.0,0.503,0.387,-0.11599999999999999,,,False,False,True
+SLE-2023,SLE,Sierra Leone,2023,2020,2022,3,2,observed,False,2.0,1.0,0.564,0.493,-0.07099999999999995,,,False,False,False
+GEO-2024,GEO,Georgia,2024,2021,2023,3,1,observed,False,2.0,1.0,0.583,0.48,-0.10299999999999998,,,False,True,True
+IDN-2024,IDN,Indonesia,2024,2021,2023,3,1,observed,False,2.0,1.0,0.538,0.483,-0.05500000000000005,,,False,True,False
+MNG-2024,MNG,Mongolia,2024,2021,2023,3,1,observed,False,2.0,1.0,0.533,0.496,-0.03700000000000003,,,False,True,False

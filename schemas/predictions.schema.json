@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/democratic-breakdown/predictions-1.0.0",
+  "title": "Democratic breakdown score rows",
+  "type": "object",
+  "required": ["schema_version", "model_type", "outcome_definition_id", "country_id", "iso3", "country_name", "country_crosswalk_version", "forecast_origin_year", "forecast_issued_at", "political_state_reference_year", "forecast_horizon_years", "target_end_year", "estimated_risk", "risk_interval", "eligibility_status", "score_status", "unavailable_reason", "model_version", "run_id", "code_commit", "data_snapshot_id", "data_as_of", "feature_data_completeness", "feature_max_age_years", "staleness_status", "evaluation_cohort_id", "calibration_version"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"}, "model_type": {"const": "democratic_breakdown"},
+    "forecast_horizon_years": {"const": 3}, "estimated_risk": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "risk_interval": {"type": ["object", "null"]}, "unavailable_reason": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

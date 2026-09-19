@@ -1,0 +1,238 @@
+{
+  "research_status": "research-only",
+  "leading_candidate": "duration_plus_score",
+  "cohort": {
+    "origin_year_min": 2015,
+    "origin_year_max": 2021,
+    "countries": 103,
+    "spells": 106,
+    "rows": 658,
+    "positive_labels": 60,
+    "distinct_events": 24
+  },
+  "models": {
+    "regularized_logit": {
+      "rows": 658,
+      "positives": 60,
+      "prevalence": 0.0911854103343465,
+      "roc_auc": 0.8423076923076922,
+      "average_precision": 0.29567074191590337,
+      "ap_prevalence_lift": 3.2425224696777404,
+      "brier_score": 0.07707175604002589,
+      "brier_skill_vs_prevalence": 0.0699750339433175,
+      "log_loss": 0.2605598885007614,
+      "mean_predicted": 0.047105449040042935,
+      "observed_incidence": 0.0911854103343465,
+      "calibration_intercept": 0.695954221967045,
+      "calibration_slope": 0.9478070805287506
+    },
+    "duration_only": {
+      "rows": 658,
+      "positives": 60,
+      "prevalence": 0.0911854103343465,
+      "roc_auc": 0.783876811594203,
+      "average_precision": 0.2415608084410586,
+      "ap_prevalence_lift": 2.6491168659036095,
+      "brier_score": 0.08004908982157131,
+      "brier_skill_vs_prevalence": 0.03404754388219622,
+      "log_loss": 0.28236328233250607,
+      "mean_predicted": 0.04369536527576835,
+      "observed_incidence": 0.0911854103343465,
+      "calibration_intercept": 2.0049234793543675,
+      "calibration_slope": 1.4356719194179994
+    },
+    "duration_plus_score": {
+      "rows": 658,
+      "positives": 60,
+      "prevalence": 0.0911854103343465,
+      "roc_auc": 0.8427536231884057,
+      "average_precision": 0.2884367800792491,
+      "ap_prevalence_lift": 3.1631900215357653,
+      "brier_score": 0.07632208622227657,
+      "brier_skill_vs_prevalence": 0.0790213004698509,
+      "log_loss": 0.25507285150633113,
+      "mean_predicted": 0.05242637544996455,
+      "observed_incidence": 0.0911854103343465,
+      "calibration_intercept": 0.8421936752606209,
+      "calibration_slope": 1.0686988640336916
+    },
+    "recent_prevalence": {
+      "rows": 658,
+      "positives": 60,
+      "prevalence": 0.0911854103343465,
+      "roc_auc": 0.4573717948717949,
+      "average_precision": 0.08444824000836094,
+      "ap_prevalence_lift": 0.9261156987583584,
+      "brier_score": 0.08410287127077536,
+      "brier_skill_vs_prevalence": -0.014869441384614879,
+      "log_loss": 0.31524191314695277,
+      "mean_predicted": 0.05825149378226558,
+      "observed_incidence": 0.0911854103343465,
+      "calibration_intercept": -8.136756286447559,
+      "calibration_slope": -2.0909207946233574
+    },
+    "training_prevalence": {
+      "rows": 658,
+      "positives": 60,
+      "prevalence": 0.0911854103343465,
+      "roc_auc": 0.5,
+      "average_precision": 0.0911854103343465,
+      "ap_prevalence_lift": 1.0,
+      "brier_score": 0.08396676920248217,
+      "brier_skill_vs_prevalence": -0.01322709757479057,
+      "log_loss": 0.31388806327586116,
+      "mean_predicted": 0.0580774365821095,
+      "observed_incidence": 0.0911854103343465,
+      "calibration_intercept": -0.2623917974095873,
+      "calibration_slope": 0.7310618044406559
+    }
+  },
+  "fixed_prediction_country_bootstrap_95": {
+    "roc_auc": [
+      0.766494673176645,
+      0.9050466666213224
+    ],
+    "average_precision": [
+      0.17646406759386746,
+      0.4447318994989579
+    ],
+    "brier_score": [
+      0.05056603652050875,
+      0.10762512219781771
+    ],
+    "log_loss": [
+      0.17687582411259406,
+      0.36708782960430325
+    ]
+  },
+  "overlapping_positive_labels": 60,
+  "distinct_events": 24,
+  "non_overlapping_origin_sensitivity": {
+    "rows": 280,
+    "positives": 23,
+    "prevalence": 0.08214285714285714,
+    "roc_auc": 0.8265944848587379,
+    "average_precision": 0.22321093612015502,
+    "ap_prevalence_lift": 2.717350526680148,
+    "brier_score": 0.07316586286778617,
+    "brier_skill_vs_prevalence": 0.029571367140173166,
+    "log_loss": 0.24882823383883426,
+    "mean_predicted": 0.045596661568361674,
+    "observed_incidence": 0.08214285714285714
+  },
+  "alternative_cutoff_sensitivity_2016_2021": {
+    "rows": 564,
+    "positives": 55,
+    "prevalence": 0.0975177304964539,
+    "roc_auc": 0.8448651544918735,
+    "average_precision": 0.32011950686524876,
+    "ap_prevalence_lift": 3.282680034036369,
+    "brier_score": 0.08178440530986275,
+    "brier_skill_vs_prevalence": 0.07071647824804073,
+    "log_loss": 0.2747865532544839,
+    "mean_predicted": 0.04772811065799193,
+    "observed_incidence": 0.0975177304964539
+  },
+  "by_origin_year": {
+    "2015": {
+      "rows": 94,
+      "positives": 5,
+      "prevalence": 0.05319148936170213,
+      "roc_auc": 0.8179775280898877,
+      "average_precision": 0.17205726735138502,
+      "ap_prevalence_lift": 3.2346766262060385,
+      "brier_score": 0.04879586042100474,
+      "brier_skill_vs_prevalence": 0.03110062319101592,
+      "log_loss": 0.17519989997842628,
+      "mean_predicted": 0.04336947933234896,
+      "observed_incidence": 0.05319148936170213
+    },
+    "2016": {
+      "rows": 96,
+      "positives": 8,
+      "prevalence": 0.08333333333333333,
+      "roc_auc": 0.8607954545454546,
+      "average_precision": 0.2911477411477411,
+      "ap_prevalence_lift": 3.4937728937728934,
+      "brier_score": 0.07273177485180728,
+      "brier_skill_vs_prevalence": 0.047874947394522804,
+      "log_loss": 0.23679049387727516,
+      "mean_predicted": 0.05228287603502505,
+      "observed_incidence": 0.08333333333333333
+    },
+    "2017": {
+      "rows": 96,
+      "positives": 8,
+      "prevalence": 0.08333333333333333,
+      "roc_auc": 0.8707386363636364,
+      "average_precision": 0.43850574712643675,
+      "ap_prevalence_lift": 5.2620689655172415,
+      "brier_score": 0.06259246881759767,
+      "brier_skill_vs_prevalence": 0.18060768093326685,
+      "log_loss": 0.21615077020571868,
+      "mean_predicted": 0.0518394763063672,
+      "observed_incidence": 0.08333333333333333
+    },
+    "2018": {
+      "rows": 94,
+      "positives": 8,
+      "prevalence": 0.0851063829787234,
+      "roc_auc": 0.8197674418604651,
+      "average_precision": 0.25071075725100495,
+      "ap_prevalence_lift": 2.9458513976993084,
+      "brier_score": 0.07591278411022642,
+      "brier_skill_vs_prevalence": 0.025050348258778055,
+      "log_loss": 0.2616657321069591,
+      "mean_predicted": 0.04512318184723431,
+      "observed_incidence": 0.0851063829787234
+    },
+    "2019": {
+      "rows": 93,
+      "positives": 10,
+      "prevalence": 0.10752688172043011,
+      "roc_auc": 0.8277108433734941,
+      "average_precision": 0.4028061661083759,
+      "ap_prevalence_lift": 3.746097344807896,
+      "brier_score": 0.08826283163801904,
+      "brier_skill_vs_prevalence": 0.08025875802743776,
+      "log_loss": 0.30623786942998565,
+      "mean_predicted": 0.046612686299519826,
+      "observed_incidence": 0.10752688172043011
+    },
+    "2020": {
+      "rows": 93,
+      "positives": 11,
+      "prevalence": 0.11827956989247312,
+      "roc_auc": 0.8636363636363636,
+      "average_precision": 0.47397705138177004,
+      "ap_prevalence_lift": 4.007260525318601,
+      "brier_score": 0.09706670039525013,
+      "brier_skill_vs_prevalence": 0.06925732625441428,
+      "log_loss": 0.3205808381685091,
+      "mean_predicted": 0.041909619124494424,
+      "observed_incidence": 0.11827956989247312
+    },
+    "2021": {
+      "rows": 92,
+      "positives": 10,
+      "prevalence": 0.10869565217391304,
+      "roc_auc": 0.8414634146341464,
+      "average_precision": 0.3200733863837312,
+      "ap_prevalence_lift": 2.944675154730327,
+      "brier_score": 0.09525901105483042,
+      "brier_skill_vs_prevalence": 0.01674113467306737,
+      "log_loss": 0.31094060933529744,
+      "mean_predicted": 0.0483560335680483,
+      "observed_incidence": 0.10869565217391304
+    }
+  },
+  "feature_missingness": {
+    "years_in_democratic_spell": 0.0,
+    "v2x_polyarchy_available": 0.0,
+    "v2x_polyarchy_change1": 0.0,
+    "v2x_polyarchy_mean3": 0.0004108463434675431,
+    "v2x_polyarchy_missing": 0.0,
+    "v2x_polyarchy_carried_forward": 0.0
+  },
+  "note": "Evaluation years were inspected by the original notebook and are not a newly untouched holdout."
+}

@@ -1,0 +1,27 @@
+{
+  "estimand": {
+    "unit": "country-year forecast origin",
+    "population": "v2x_regime in {2,3} at origin",
+    "outcome": "first v2x_regime transition to {0,1} during t+1 through t+3",
+    "temporary_exit_counts": true,
+    "redemocratization_starts_new_spell": true,
+    "primary_horizon_years": 3
+  },
+  "timing": {
+    "forecast_origin_year": "political state year t",
+    "political_state_reference_year": "t",
+    "forecast_issued_at": "actual artifact creation time; never backdated",
+    "political_feature_availability_lag_years_assumed": 1,
+    "maximum_carry_forward_age_years": 2
+  },
+  "cohorts": {"development": [2005, 2010], "calibration": [2011, 2014], "evaluation": [2015, 2021]},
+  "promotion_criteria_written_before_comparison": [
+    "all data and temporal-boundary validations pass",
+    "offline run is reproducible from checksummed inputs",
+    "richer model improves average precision and proper scores over simple baselines",
+    "calibration is acceptable across evaluation origins",
+    "country-aware intervals and coverage evidence are adequate",
+    "behavior is stable across evaluation origins"
+  ],
+  "promotion_decision": "research-only until historical data vintages support real-time validation and evidence meets every criterion"
+}
